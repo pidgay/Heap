@@ -154,11 +154,11 @@ public:
     }
 
     int getLeftIndex(int index){
-        return 2 * index + 1;
+        return (2 * index) + 1;
     }
 
     int getRightIndex(int index){
-        return 2 * index + 2;
+        return (2 * index) + 2;
     }
 
     void swapNodes(int firstNodeIndex, int secondNodeIndex){
@@ -166,39 +166,45 @@ public:
     }
 
     void heapifyUp(int index){
-        if (index > 0) {
-            int parentIndex = getParentIndex(index);
+        if(index < array->firstAvailableIndex){
+            int j = index;
 
-            if (compareData(&array->arrayPointer[index], &array->arrayPointer[parentIndex]) == 1){
-                swapNodes(index, parentIndex);
-                index = parentIndex;
+            while(j > 0 && compareData(array->arrayPointer[j], array->arrayPointer[j/2]) == 1){
+                swapNodes(j/2,j);
+                j = j/2;
             }
-            heapifyUp(index);
+            heapifyUp(++index);
         }
     }
 
     void heapifyDown(int index){
         int leftIndex = getLeftIndex(index);
         int rightIndex = getRightIndex(index);
+        int largestChildIndex;
         int largestValueIndex = index;
 
         T* leftNode = array->arrayPointer[leftIndex];
         T* rightNode = array->arrayPointer[rightIndex];
         T* largestNode = array->arrayPointer[largestValueIndex];
+        T* largestChild;
 
-            if (leftIndex < array->firstAvailableIndex && compareData(leftNode, largestNode) == 1) {
-                largestValueIndex = leftIndex;
-            }
+        if (leftIndex < array->firstAvailableIndex -1 && compareData(leftNode, rightNode) != -1){
+            largestChild = leftNode;
+            largestChildIndex = leftIndex;
+        }
+        else {
+            largestChild = rightNode;
+            largestChildIndex = rightIndex;
+        }
 
-            if (rightIndex < array->firstAvailableIndex && compareData(rightNode, largestNode) == 1) {
-                largestValueIndex = rightIndex;
-            }
+        if (largestChildIndex < array->firstAvailableIndex && compareData(largestChild, largestNode) == 1) {
+            largestValueIndex = largestChildIndex;
+        }
 
-            if (largestValueIndex != index) {
-                swapNodes(index, largestValueIndex);
-                heapifyDown(largestValueIndex);
-            }
-
+        if (largestValueIndex != index) {
+            swapNodes(index, largestValueIndex);
+            heapifyDown(largestValueIndex);
+        }
     }
 
     void insertNode(T* newNode){
@@ -223,7 +229,7 @@ public:
         poppedNode->update(array->arrayPointer[0]);
         swapNodes(0,lastNodeIndex);
         array->deleteNode(lastNodeIndex);
-        heapifyDown(0);
+        heapifyUp(0);
         return poppedNode;
     }
 
@@ -243,7 +249,7 @@ int main() {
     class Heap<Data>* heap = new Heap<Data>;
 
     for (int i = 0; i < 10; ++i) { // Adding new random elements
-        class Data* newNode = new Data(i, 'A');
+        class Data* newNode = new Data(i, 'a');
         heap->insertNode(newNode);
     }
     heap->printHeap();
