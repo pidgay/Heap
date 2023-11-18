@@ -224,12 +224,13 @@ public:
         }
     }
 
-    T* popNode(T* poppedNode){
+    T* popNode(){
+        T* poppedNode = new T() ;
         int lastNodeIndex = array->firstAvailableIndex - 1;
         poppedNode->update(array->arrayPointer[0]);
         swapNodes(0,lastNodeIndex);
         array->deleteNode(lastNodeIndex);
-        heapifyUp(0);
+        heapifyDown(0);
         return poppedNode;
     }
 
@@ -249,29 +250,31 @@ int main() {
     class Heap<Data>* heap = new Heap<Data>;
 
     for (int i = 0; i < 10; ++i) { // Adding new random elements
-        class Data* newNode = new Data(i, 'a');
+        class Data* newNode = new Data();
         heap->insertNode(newNode);
     }
-    heap->printHeap();
-    cout << "======================================" << endl;
-    cout << "POP: ";
-    Data* pop = new Data();
-    heap->popNode(pop);
-    pop->display();
-    cout << "======================================" << endl;
-    heap->printHeap();
-    cout << "======================================" << endl;
-    cout << "POP: ";
-    heap->popNode(pop);
-    pop->display();
-    cout << "======================================" << endl;
-    heap->printHeap();
-    cout << "======================================" << endl;
-    cout << "POP: ";
-    heap->popNode(pop);
-    pop->display();
-    cout << "======================================" << endl;
+    cout
+        << "======================================" << endl
+        << "New Heap: " << endl
+        << "======================================" << endl;
     heap->printHeap();
 
+    cout
+            << "======================================" << endl
+            << "Popped Nodes: " << endl
+            << "======================================" << endl;
+    heap->popNode()->display();
+    heap->popNode()->display();
+    heap->popNode()->display();
+    heap->popNode()->display();
+    cout
+            << "======================================" << endl
+            << "Heap after pop: " << endl
+            << "======================================" << endl;
+    heap->printHeap();
+
+    heap->clearHeap();
+
+    heap->printHeap();
     return 0;
 }
